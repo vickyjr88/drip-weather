@@ -1,8 +1,9 @@
 package com.dripemporium.weather.ui.screens
 
-import android.graphics.Color
+import androidx.compose.ui.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,7 @@ import java.util.Locale
 fun LocationListScreen(
     navController: NavHostController,
     viewModel: LocationViewModel = hiltViewModel(),
-    onDateSelected: Unit
+    onDateSelected: (Any) -> Unit
 ) {
     val locations = viewModel.locations.collectAsState()
 
@@ -68,7 +69,7 @@ fun LocationListScreen(
         }
 
         Column {
-            CalendarScreen()
+            CalendarScreen(onDateSelected = onDateSelected)
         }
         }
     }
@@ -140,8 +141,8 @@ fun LocationListScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarScreen() {
-    var selectedDate = remember { mutableStateOf<LocalDate?>(null) }
+fun CalendarScreen(onDateSelected: (Any) -> Unit) {
+    var selectedDate: MutableState<LocalDate?> = remember { mutableStateOf(null) }
     val currentMonth = remember { YearMonth.now() }
     val today = remember { LocalDate.now() }
 
@@ -153,7 +154,7 @@ fun CalendarScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Selected Date: ${selectedDate ?: "None"}",
+            text = "Selected Date: ${selectedDate.value ?: "None"}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
@@ -162,8 +163,11 @@ fun CalendarScreen() {
         // Calendar View
         CalendarView(
             month = currentMonth,
-            selectedDate = selectedDate,
-            onDateSelected = { selectedDate = it },
+            selectedDate = selectedDate.value,
+            onDateSelected = {
+                selectedDate.value = it
+                onDateSelected(it.toString())
+                             },
             today = today
         )
     }
@@ -173,8 +177,8 @@ fun CalendarScreen() {
 @Composable
 fun CalendarView(
     month: YearMonth,
-    selectedDate: MutableState<LocalDate?>,
-    onDateSelected: (MutableState<LocalDate?>) -> Unit,
+    selectedDate: LocalDate?,
+    onDateSelected: (LocalDate?) -> Unit,
     today: LocalDate
 ) {
     val firstDayOfMonth = month.atDay(1)
@@ -217,7 +221,7 @@ fun CalendarView(
                         val date = firstDayOfMonth.plusDays((index - 1).toLong())
                         DayCell(
                             date = date,
-                            isSelected = false, // date == selectedDate,
+                            isSelected = date == selectedDate,
                             isToday = date == today,
                             onClick = onDateSelected
                         )
@@ -232,25 +236,25 @@ fun CalendarView(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DayCell(date: LocalDate, isSelected: Boolean, isToday: Boolean, onClick: (MutableState<LocalDate?>) -> Unit) {
+fun DayCell(date: LocalDate, isSelected: Boolean, isToday: Boolean, onClick: (LocalDate?) -> Unit) {
     val backgroundColor = when {
-        isSelected -> Color.BLUE
-        isToday -> Color.GREEN
-        else -> Color.TRANSPARENT
+        isSelected -> Color.Blue
+        isToday -> Color.Green
+        else -> Color.Transparent
     }
 
     Box(
         modifier = Modifier
             .size(40.dp)
-            //background(backgroundColor)
+            .background(backgroundColor)
             .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = date.dayOfMonth.toString(),
             fontSize = 14.sp,
-            // color = if (isSelected || isToday) Color.WHITE else Color.BLACK,
-            modifier = Modifier.clickable { onClick(mutableStateOf(date) ) }
+            color = if (isSelected || isToday) Color.White else Color.Black,
+            modifier = Modifier.clickable { onClick(date) }
         )
     }
 }

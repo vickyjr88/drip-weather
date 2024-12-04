@@ -24,10 +24,10 @@ interface WeatherApiService {
         @Query("q") locationId: String
     ): Response<LocationDetailsResponse>
 
-    @GET("history.json")
+/*    @GET("history.json")
     suspend fun getHistoricalWeather(
         @Query("key") apiKey: String,
         @Query("q") location: String,
         @Query("dt") date: String
-    ): WeatherData
+    ): WeatherData*/
 }

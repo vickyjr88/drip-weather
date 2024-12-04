@@ -2,6 +2,7 @@ package com.dripemporium.weather
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -44,28 +45,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WeatherAppTheme {
-        Greeting("Android")
-    }
-}
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherAppSet(viewModel: LocationViewModel, locationDetailViewModel: LocationDetailViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "location_list") {
-        composable("location_list") { LocationListScreen(navController, viewModel, onDateSelected("")) }
+        composable("location_list") { LocationListScreen(navController, viewModel) { date ->
+            onDateSelected(date)
+        }
+        }
         composable(
             "location_details/{locationId}",
             arguments = listOf(navArgument("locationId") { type = NavType.StringType })
@@ -76,6 +64,6 @@ fun WeatherAppSet(viewModel: LocationViewModel, locationDetailViewModel: Locatio
     }
 }
 
-fun onDateSelected(date: String) {
-    println("Hello ${date}")
+fun onDateSelected(date: Any) {
+    Log.d("Mkuu", "Hello ${date}")
 }

@@ -1,3 +1,4 @@
+/*
 package com.dripemporium.weather.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
@@ -20,4 +21,4 @@ class HistWeatherViewModel @Inject constructor(private val repository: WeatherRe
             _weather.value = repository.getWeather(date, location, apiKey)
         }
     }
-}
+}*/
