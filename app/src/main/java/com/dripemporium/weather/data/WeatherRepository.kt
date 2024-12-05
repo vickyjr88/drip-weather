@@ -1,5 +1,6 @@
 package com.dripemporium.weather.data
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -27,10 +28,21 @@ class WeatherRepository @Inject constructor(
             apiService.searchLocations(apiKey, query)
         }
 
-   /* suspend fun getWeather(date: String, location: String, apiKey: String): WeatherData {
-        val cachedData = weatherDao.getWeather(date)
-        return cachedData ?: apiService.getHistoricalWeather(apiKey, location, date).also {
-            weatherDao.insertWeather(it)
+    suspend fun getWeather(date: String, location: String, apiKey: String): HistoryResponse? {
+        return try {
+            val response = apiService.getHistoricalWeather(apiKey, location, date)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("getWeather", "HTTP error: ${response.code()}")
+                null
+            }
+        } catch (e: HttpException) {
+            Log.e("getWeather", "HTTP exception", e)
+            null
+        } catch (e: Exception) {
+            Log.e("getWeather", "Exception", e)
+            null
         }
-    }*/
+    }
 }

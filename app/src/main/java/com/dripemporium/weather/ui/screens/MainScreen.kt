@@ -62,7 +62,7 @@ fun MainScreen(viewModel: WeatherComViewModel = hiltViewModel()) {
             Text(
                 text = "Temperature: ${
                     if (isCelsius) "${viewModel.convertToCelsius(forecast.temperatureMax)} °C"
-                    else "${forecast.temperatureMax} °F"
+                    else "${forecast?.temperatureMax} °F"
                 }"
             )
         }

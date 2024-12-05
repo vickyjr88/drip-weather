@@ -24,7 +24,8 @@ data class Current(
 
 data class Condition(
     val text: String,
-    val icon: String
+    val icon: String,
+    val code: Int
 )
 
 data class LocationResponse(
@@ -47,4 +48,24 @@ data class Location(
 
 data class LocationDetailsResponse(
     val location: Location
+)
+
+data class ForecastHour(
+    val forecastday: List<ForecastDay>,
+)
+
+data class ForecastDay(
+    val date: String,
+    val hour: List<WeatherData>
+)
+data class HistoryResponse(
+    val forecast: ForecastHour
+)
+data class WeatherData(
+    val date: String,          // Date of the weather observation (e.g., "2024-12-05")
+    val temperature: Float,    // Temperature in Celsius
+    val humidity: Int,         // Humidity percentage
+    val windSpeed: Float,      // Wind speed in km/h
+    val condition: Condition,      // Weather condition description (e.g., "Sunny")
+    val time: String
 )
